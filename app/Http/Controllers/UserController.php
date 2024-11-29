@@ -63,7 +63,7 @@ class UserController extends Controller
                'status' => 'success',
                'message' => 'User Login Successfully',
                'token' => $token
-           ], 200);
+           ], 200)->cookie('token', $token, 60); //add cookie for 1 hour
 
        } else{
            return response()->json([
@@ -116,7 +116,7 @@ class UserController extends Controller
                 'status' => 'success',
                 'message' => 'OTP Verified Successfully',
                 'token' => $token
-            ], 200);
+            ], 200)->cookie('token', $token, 10); // add cookie for 10 minutes
 
         } else {
             return response()->json([
@@ -146,5 +146,10 @@ class UserController extends Controller
         }
 
     }
+
+
+
+
+//    End
 }
 
