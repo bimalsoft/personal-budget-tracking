@@ -13,12 +13,16 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->rememberToken();
-            $table->timestamps();
+            $table->string('name',50);
+            $table->string('email',50)->unique();
+            $table->string('mobile',20)->nullable();
+            $table->string('password',255);
+            $table->enum('role', ['admin', 'user'])->default('user');
+            $table->string('otp',6)->nullable();
+            $table->string('avatar',50)->nullable();
+            $table->ipAddress('ipaddress');
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
     }
 
