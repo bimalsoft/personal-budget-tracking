@@ -35,6 +35,10 @@ Route::post('/add-category',[CategoryController::class,'addCategory']);
 Route::get('/get-category',[CategoryController::class,'getCategory']);
 
 
+// Income Api Routes
+Route::post('/add-income',[IncomeController::class,'addIncome']);
+
+
 
 // this route use tasting purpose!
 Route::get('/test', [IncomeController::class, 'addIncome']);
