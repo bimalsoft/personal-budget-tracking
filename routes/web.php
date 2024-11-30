@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\TokenVerificationMiddleware;
 use Illuminate\Support\Facades\Route;
@@ -26,3 +27,6 @@ Route::post('/verify-otp',[UserController::class,'VerifyOTP']);
 Route::post('/reset-password',[UserController::class,'ResetPassword'])->middleware([TokenVerificationMiddleware::class]);
 
 Route::get('/logout', [UserController::class, 'UserLogout']);
+
+// this route use tasting purpose!
+Route::get('/test', [IncomeController::class, 'addIncome']);
