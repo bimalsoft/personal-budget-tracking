@@ -129,7 +129,7 @@ class UserController extends Controller
     function ResetPassword(Request $request)
     {
         try {
-            $email = $request->header('email');
+            $email = JWTToken::VerifyToken($request->input('token'));
             $password = $request->input('password');
             User::where('email', '=', $email)->update(['password' => $password]);
 
