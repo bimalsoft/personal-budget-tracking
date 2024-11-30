@@ -37,6 +37,7 @@ Route::get('/get-category',[CategoryController::class,'getCategory']);
 
 // Income Api Routes
 Route::post('/add-income',[IncomeController::class,'addIncome']);
+Route::get('/get-income',[IncomeController::class,'getIncome']);
 
 
 

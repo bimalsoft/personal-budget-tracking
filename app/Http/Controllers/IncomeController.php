@@ -29,6 +29,19 @@ class IncomeController extends Controller
         }
     }
 
+    function getIncome(Request $request)
+    {
+
+        try {
+            $email = JWTToken::VerifyToken($request->cookie("token"));
+            $user = User::where('email', $email)->first();
+            $incomes = Income::where('user_id', $user->id)->get();
+            return response()->json(['ststus'=>'success','incomes' => $incomes]);
+        }catch (Exception $e){
+            return response()->json(['ststus'=>'error','message' => $e->getMessage()]);
+        }
+    }
+
 
 
 
