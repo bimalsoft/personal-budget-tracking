@@ -10,9 +10,35 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\View\View;
 
 class UserController extends Controller
 {
+
+    function LoginPage():View{
+        return view('pages.auth.login-page');
+    }
+
+    function RegistrationPage():View{
+        return view('pages.auth.registration-page');
+    }
+    function SendOtpPage():View{
+        return view('pages.auth.send-otp-page');
+    }
+    function VerifyOTPPage():View{
+        return view('pages.auth.verify-otp-page');
+    }
+
+    function ResetPasswordPage():View{
+        return view('pages.auth.reset-pass-page');
+    }
+
+    function ProfilePage():View{
+        return view('pages.dashboard.profile-page');
+    }
+
+
+
     function UserRegistration(Request $request)
     {
 
@@ -56,14 +82,15 @@ class UserController extends Controller
        $count = User::where('email','=',$request->input('email'))
             ->where('password', '=', $request->input('password'))
             ->select('id')->first();
-       if ($count!==null) {
 
-           $token =JWTToken::CreateToken($request->input('email'));
+       if ($count!==null) {
+            // User Login-> JWT Token Issue
+           $token=JWTToken::CreateToken($request->input('email'),$count->id);
            return response()->json([
                'status' => 'success',
-               'message' => 'User Login Successfully',
-               'token' => $token
-           ], 200)->cookie('token', $token, 60); //add cookie for 1 hour
+               'message' => 'User Login Successful',
+           ],200)->cookie('token',$token,time()+60*24*30);
+
 
        } else{
            return response()->json([
@@ -86,7 +113,7 @@ class UserController extends Controller
             User::where('email', '=', $email)->update(['otp' => $otp]);
             return response()->json([
                 'status' => 'success',
-                'message' => 'OTP Sent Successfully',
+                'message' => '4 Digit OTP Code has been send to your email !',
             ],200);
 
         } else {
@@ -114,9 +141,9 @@ class UserController extends Controller
             $token =JWTToken::CreateTokenForResetPassword($request->input('email'));
             return response()->json([
                 'status' => 'success',
-                'message' => 'OTP Verified Successfully',
-                'token' => $token
-            ], 200)->cookie('token', $token, 10); // add cookie for 10 minutes
+                'message' => 'OTP Verification Successful',
+            ],200)->cookie('token',$token,60*24*30);
+
 
         } else {
             return response()->json([
@@ -148,8 +175,9 @@ class UserController extends Controller
     }
 
 
+    function UserLogout(){
+        return redirect('/')->cookie('token','',-1);
+    }
 
-
-//    End
 }
 
