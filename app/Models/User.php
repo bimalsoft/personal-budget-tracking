@@ -22,6 +22,9 @@ class User extends Authenticatable
     ];
 
 
+    // add hidden var for no one can see it
+    protected $hidden = ['password'];
+
     protected $attributes = [
         'otp' => 0
     ];

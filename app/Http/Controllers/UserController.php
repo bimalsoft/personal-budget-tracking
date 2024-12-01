@@ -91,6 +91,7 @@ class UserController extends Controller
                'message' => 'User Login Successful',
            ],200)->cookie('token',$token,time()+60*24*30);
 
+
        } else{
            return response()->json([
                'status' => 'failed',
@@ -143,6 +144,7 @@ class UserController extends Controller
                 'message' => 'OTP Verification Successful',
             ],200)->cookie('token',$token,60*24*30);
 
+
         } else {
             return response()->json([
                 'status' => 'failed',
@@ -154,7 +156,7 @@ class UserController extends Controller
     function ResetPassword(Request $request)
     {
         try {
-            $email = $request->header('email');
+            $email = JWTToken::VerifyToken($request->input('token'));
             $password = $request->input('password');
             User::where('email', '=', $email)->update(['password' => $password]);
 
@@ -172,8 +174,10 @@ class UserController extends Controller
 
     }
 
+
     function UserLogout(){
         return redirect('/')->cookie('token','',-1);
     }
+
 }
 

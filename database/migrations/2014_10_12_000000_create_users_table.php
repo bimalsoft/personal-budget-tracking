@@ -20,6 +20,7 @@ return new class extends Migration
             $table->enum('role', ['admin', 'user'])->default('user');
             $table->string('otp',6)->nullable();
             $table->string('avatar',50)->nullable();
+            $table->decimal('balance',10,2)->default(0); // added balance column
             $table->ipAddress('ipaddress');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();

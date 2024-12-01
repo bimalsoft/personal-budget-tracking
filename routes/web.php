@@ -1,5 +1,8 @@
 <?php
 
+
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\TokenVerificationMiddleware;
@@ -18,6 +21,23 @@ use Illuminate\Support\Facades\Route;
 
 
 
+
+
+//category api Routes
+Route::post('/add-category',[CategoryController::class,'addCategory']);
+Route::get('/get-category',[CategoryController::class,'getCategory']);
+
+
+// Income Api Routes
+Route::post('/add-income',[IncomeController::class,'addIncome']);
+Route::get('/get-income',[IncomeController::class,'getIncome']);
+
+
+
+// this route use tasting purpose!
+Route::get('/test', [IncomeController::class, 'addIncome']);
+=======
+
 // Web API Routes
 Route::post('/user-registration',[UserController::class,'UserRegistration']);
 Route::post('/user-login',[UserController::class,'UserLogin']);
@@ -35,3 +55,4 @@ Route::get('/userRegistration',[UserController::class,'RegistrationPage']);
 Route::get('/sendOtp',[UserController::class,'SendOtpPage']);
 Route::get('/verifyOtp',[UserController::class,'VerifyOTPPage']);
 Route::get('/resetPassword',[UserController::class,'ResetPasswordPage'])->middleware([TokenVerificationMiddleware::class]);
+
