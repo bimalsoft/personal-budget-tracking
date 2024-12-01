@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\TokenVerificationMiddleware;
 use Illuminate\Support\Facades\Route;
@@ -15,14 +16,22 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
 
-Route::post('/register',[UserController::class,'UserRegistration']);
-Route::post('/login',[UserController::class,'UserLogin']);
+
+// Web API Routes
+Route::post('/user-registration',[UserController::class,'UserRegistration']);
+Route::post('/user-login',[UserController::class,'UserLogin']);
 Route::post('/send-otp',[UserController::class,'SendOTPCode']);
 Route::post('/verify-otp',[UserController::class,'VerifyOTP']);
 Route::post('/reset-password',[UserController::class,'ResetPassword'])->middleware([TokenVerificationMiddleware::class]);
+// User Logout
+Route::get('/logout',[UserController::class,'UserLogout']);
 
-Route::get('/logout', [UserController::class, 'UserLogout']);
+
+// Page Routes
+Route::get('/',[HomeController::class,'HomePage']);
+Route::get('/userLogin',[UserController::class,'LoginPage']);
+Route::get('/userRegistration',[UserController::class,'RegistrationPage']);
+Route::get('/sendOtp',[UserController::class,'SendOtpPage']);
+Route::get('/verifyOtp',[UserController::class,'VerifyOTPPage']);
+Route::get('/resetPassword',[UserController::class,'ResetPasswordPage'])->middleware([TokenVerificationMiddleware::class]);
