@@ -11,29 +11,32 @@ use Mockery\Exception;
 
 class CategoryController extends Controller
 {
-    function addCategory(Request $request)
-    {
-        try {
-            $request->validate([
-                'name' => 'required|string',
-                'type' => 'required|string',
-            ]);
-            $email = JWTToken::VerifyToken($request->cookie("token"));
-            $user = User::where('email', $email)->first();
-            $request["user_id"] = $user->id;
-
-            Category::create($request->all());
-            return response()->json(['status' => 'success', 'message' => 'Category added successfully!']);
-
-        }catch (Exception $exception){
-            return response()->json(['status' => 'error', 'message' => $exception->getMessage()]);
-        }
+    function CategoryList(Request $request){
+        $user_id=$request->header('id');
+        return Category::where('user_id',$user_id)->get();
     }
-    function getCategory(Request $request){
-        $email = JWTToken::VerifyToken($request->cookie("token"));
-        $user = User::where('email', $email)->first();
 
-        $categories = Category::where('user_id', $user->id)->get();
-        return response()->json(['status' => 'success', 'categories' => $categories]);
+    function CategoryCreate(Request $request){
+        $user_id=$request->header('id');
+        return Category::create([
+            'name'=>$request->input('name'),
+            'user_id'=>$user_id
+        ]);
+    }
+
+    function CategoryDelete(Request $request){
+        $category_id=$request->input('id');
+        $user_id=$request->header('id');
+        return Category::where('id',$category_id)->where('user_id',$user_id)->delete();
+    }
+
+
+
+    function CategoryUpdate(Request $request){
+        $category_id=$request->input('id');
+        $user_id=$request->header('id');
+        return Category::where('id',$category_id)->where('user_id',$user_id)->update([
+            'name'=>$request->input('name'),
+        ]);
     }
 }
