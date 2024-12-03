@@ -51,7 +51,9 @@ Route::get('/get-income',[IncomeController::class,'getIncome']);
 
 
 // this route use tasting purpose!
-Route::get('/test', [IncomeController::class, 'addIncome']);
+Route::get('/test', function (){
+    return view('layout.dashboard');
+});
 
 
 
