@@ -14,7 +14,10 @@
     <!-- Popper -->
     <script src="{{asset('assets/js/popper.min.js')}}"></script>
     <!-- Main Styling -->
-    <link href="{{'assets/css/argon-dashboard-tailwind.css'}}" rel="stylesheet"/>
+    <link rel="stylesheet" href="{{asset('assets/css/coustom.css')}}">
+    <link href="{{asset('assets/css/argon-dashboard-tailwind.css')}}" rel="stylesheet"/>
+
+
 </head>
 
 <body
@@ -31,8 +34,8 @@
     @include('components.dashboard.nav')
     <!-- end Navbar -->
 
-    <!-- cards -->
-        @include('components.dashboard.cards')
+    <!-- content -->
+    @yield('component')
     <!-- end cards -->
 </main>
 

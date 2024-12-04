@@ -1,0 +1,91 @@
+/* Basic reset */
+
+/* Body styling */
+
+/* Form container styling */
+.form-container {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+    margin: 20px;
+}
+
+/* Title styling */
+.form-container h2 {
+    text-align: center;
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Form styling */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Label and input row layout */
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 15px;
+}
+
+.form-row label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    width: 100%;
+    max-width: 150px;
+}
+
+.form-row input,
+.form-row textarea {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.form-row input:focus,
+.form-row textarea:focus {
+    border-color: #4CAF50;
+    box-shadow: 0 0 8px rgba(0, 128, 0, 0.3);
+}
+
+/* Adjust label width for larger screens */
+@media (min-width: 600px) {
+    .form-row label {
+        width: 25%;
+    }
+
+    .form-row input,
+    .form-row textarea {
+        width: 70%;
+    }
+}
+
+/* Submit button styling */
+.form-row button {
+    padding: 12px;
+    font-size: 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
+}
+
+.form-row button:hover {
+    background-color: #45a049;
+}

@@ -2,6 +2,7 @@
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PageController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\TokenVerificationMiddleware;
 use Illuminate\Support\Facades\Route;
@@ -50,9 +51,15 @@ Route::post('/add-income',[IncomeController::class,'addIncome']);
 Route::get('/get-income',[IncomeController::class,'getIncome']);
 
 
+
+// Page Routes
+
+Route::get('dashboard',[PageController::class, 'dashboard']);
+
+
 // this route use tasting purpose!
 Route::get('/test', function (){
-    return view('layout.dashboard');
+    return view('pages.dashboardPage');
 });
 
 
