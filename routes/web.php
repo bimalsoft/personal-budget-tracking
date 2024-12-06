@@ -1,5 +1,6 @@
 <?php
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PageController;
@@ -43,18 +44,21 @@ Route::get("/list-category",[CategoryController::class,'CategoryList'])->middlew
 Route::post("/delete-category",[CategoryController::class,'CategoryDelete'])->middleware([TokenVerificationMiddleware::class]);
 Route::post("/update-category",[CategoryController::class,'CategoryUpdate'])->middleware([TokenVerificationMiddleware::class]);
 
+// Expense Api Routes
+Route::post('/add-expense', [ExpenseController::class, 'addExpenses'])->middleware([TokenVerificationMiddleware::class]);
+Route::post('/update-expense', [ExpenseController::class, 'updateExpenses'])->middleware([TokenVerificationMiddleware::class]);
+Route::post('/delete-expense', [ExpenseController::class, 'ExpenseDelete'])->middleware([TokenVerificationMiddleware::class]);
 
 
 
 // Income Api Routes
-Route::post('/add-income',[IncomeController::class,'addIncome']);
-Route::get('/get-income',[IncomeController::class,'getIncome']);
+Route::post('/add-income',[IncomeController::class,'addIncome'])->middleware([TokenVerificationMiddleware::class]);
+Route::get('/get-income',[IncomeController::class,'getIncome'])->middleware([TokenVerificationMiddleware::class]);
 
 
 
 // Page Routes
-
-Route::get('dashboard',[PageController::class, 'dashboard']);
+Route::get('dashboard',[PageController::class, 'dashboard'])->middleware([TokenVerificationMiddleware::class]);
 
 
 // this route use tasting purpose!
