@@ -48,17 +48,21 @@ Route::post("/update-category",[CategoryController::class,'CategoryUpdate'])->mi
 Route::post('/add-expense', [ExpenseController::class, 'addExpenses'])->middleware([TokenVerificationMiddleware::class]);
 Route::post('/update-expense', [ExpenseController::class, 'updateExpenses'])->middleware([TokenVerificationMiddleware::class]);
 Route::post('/delete-expense', [ExpenseController::class, 'ExpenseDelete'])->middleware([TokenVerificationMiddleware::class]);
-
+Route::get('/get-sum-expense', [ExpenseController::class, 'getSumExpenses'])->middleware([TokenVerificationMiddleware::class]);
+Route::get('/get-expense', [ExpenseController::class, 'getExpenses'])->middleware([TokenVerificationMiddleware::class]);
 
 
 // Income Api Routes
 Route::post('/add-income',[IncomeController::class,'addIncome'])->middleware([TokenVerificationMiddleware::class]);
 Route::get('/get-income',[IncomeController::class,'getIncome'])->middleware([TokenVerificationMiddleware::class]);
+Route::get('/showBalance',[IncomeController::class,'showBalance'])->middleware([TokenVerificationMiddleware::class]);
 
 
 
 // Page Routes
 Route::get('dashboard',[PageController::class, 'dashboard'])->middleware([TokenVerificationMiddleware::class]);
+Route::get('login',[PageController::class, 'login']);
+
 
 
 // this route use tasting purpose!

@@ -86,10 +86,7 @@ class UserController extends Controller
        if ($count!==null) {
             // User Login-> JWT Token Issue
            $token=JWTToken::CreateToken($request->input('email'),$count->id);
-           return response()->json([
-               'status' => 'success',
-               'message' => 'User Login Successful',
-           ],200)->cookie('token',$token,time()+60*24*30);
+           return redirect('/dashboard')->cookie('token',$token,time()+60*24*30);
 
 
        } else{

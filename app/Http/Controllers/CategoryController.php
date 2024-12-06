@@ -13,7 +13,11 @@ class CategoryController extends Controller
 {
     function CategoryList(Request $request){
         $user_id=$request->header('id');
-        return Category::where('user_id',$user_id)->get();
+        $data = Category::where('user_id',$user_id)->get();
+        return response()->json([
+            'status' => 'success',
+            'data' => $data,
+        ], 200);
     }
 
     function CategoryCreate(Request $request){

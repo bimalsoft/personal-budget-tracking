@@ -7,9 +7,9 @@
                     <div class="flex-none w-2/3 max-w-full px-3">
                         <div>
                             <p class="mb-0 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">Balance</p>
-                            <h5 class="mb-2 font-bold dark:text-white">$53,000</h5>
+                            <h5 class="mb-2 font-bold dark:text-white">$<span id="blance"></span></h5>
                             <div class="mb-0 dark:text-white dark:opacity-60 flex">
-                                <button id="addIncome" class="inline-block px-6 py-3 mb-0 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer hover:scale-102 active:opacity-85 hover:shadow-xs bg-gradient-to-tl from-blue-500 to-violet-500 leading-pro ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 " onclick="soft.showSwal('basic')">Add</button></span>
+                                <button id="addIncome" class="inline-block px-6 py-3 mb-0 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer hover:scale-102 active:opacity-85 hover:shadow-xs bg-gradient-to-tl from-blue-500 to-violet-500 leading-pro ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 ">Add</button></span>
                             </div>
 
                         </div>
@@ -24,59 +24,143 @@
         </div>
     </div>
 
+
     <script>
-        // Function to show SweetAlert login popup
+
+        let blance = document.querySelector('#blance')
+        fetch('/showBalance')
+            .then(response => response.json())
+            .then(data => {
+                blance.innerText = data['balance'];
+            })
+
+
         document.getElementById('addIncome').addEventListener('click', () => {
-            Swal.fire({
-                title: 'Add Income',
-                html: `
-            <!-- Form -->
-       <form id="myForm" method="POST" action="submit_form.php">
-            <!-- Name Field -->
-            <div class="form-row">
-                <label for="name">Name:</label>
-                <input type="text" id="name" name="name" required placeholder="Enter your name">
-            </div>
-
-            <!-- Email Field -->
-            <div class="form-row">
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required placeholder="Enter your email">
-            </div>
-
-            <!-- Message Field -->
-            <div class="form-row">
-                <label for="message">Message:</label>
-                <textarea id="message" name="message" rows="4" required placeholder="Your message"></textarea>
-            </div>
-
-            <!-- Submit Button -->
-            <div class="form-row">
-                <button type="submit">Submit</button>
-            </div>
-        </form>
-                      `,
-                confirmButtonText: 'Submit',
-                focusConfirm: false,
-                preConfirm: () => {
-                    const username = document.getElementById('swal-username').value;
-                    const password = document.getElementById('swal-password').value;
-
-                    if (!username || !password) {
-                        Swal.showValidationMessage('Please enter both username and password');
-                    } else {
-                        return { username, password };
+            // Fetch categories from the API
+            fetch('/list-category') // Replace with your actual API endpoint
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
                     }
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    const { username, password } = result.value;
-                    // Perform your login logic here (e.g., send data to the server)
-                    Swal.fire(`Welcome, ${username}!`);
-                }
-            });
+                    return response.json();
+                })
+                .then(data => {
+                    // Ensure the categories structure matches your backend response
+                    const categories = data.categories || data.data || data;
+
+                    if (categories && categories.length > 0) {
+                        // Generate options dynamically
+                        const options = categories
+                            .map(category => `<option value="${category.id}">${category.name}</option>`)
+                            .join('');
+
+                        // Show SweetAlert popup with dynamic categories
+                        Swal.fire({
+                            title: 'Add Income',
+                            html: `
+                            <form id="myForm">
+                                <!-- Name Field -->
+                                <div class="form-row">
+                                    <label for="name">Amount:</label>
+                                    <input type="tel" id="swal-amount" name="amount" required placeholder="Enter your amount">
+                                </div>
+
+                                <!-- Category Field -->
+                                <div class="form-row">
+                                    <label for="category">Category:</label>
+                                    <select name="category" id="swal-category" required>
+                                        <option value="">Select a category</option>
+                                        ${options}
+                                    </select>
+                                </div>
+
+                                <!-- Email Field -->
+                                <div class="form-row">
+                                    <label for="date">Date:</label>
+                                    <input type="date" id="swal-date" name="date" required placeholder="Enter Date">
+                                </div>
+
+                            </form>
+                        `,
+                            confirmButtonText: 'Submit',
+                            confirmButtonColor: 'green',
+                            preConfirm: () => {
+                                const amount = document.getElementById('swal-amount').value;
+                                const category = document.getElementById('swal-category').value;
+                                const date = document.getElementById('swal-date').value;
+
+                                if (!amount || !category || !date) {
+                                    Swal.showValidationMessage('Please fill out all fields');
+                                    return false;
+                                }
+
+                                return {
+                                    amount,
+                                    category,
+                                    date,
+
+                                };
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                const {
+                                    amount,
+                                    category,
+                                    date,
+
+                                } = result.value;
+
+                                // Send data to backend using Axios
+                                axios.post('/add-income', { // Replace with your actual endpoint
+                                        amount,
+                                        category_id: category,
+                                        date,
+
+                                    })
+                                    .then(response => {
+                                        // Show a success popup after data is successfully submitted
+                                        Swal.fire({
+                                            title: 'Success!',
+                                            text: 'Your income details have been added successfully.',
+                                            icon: 'success',
+                                            confirmButtonText: 'OK',
+                                            confirmButtonColor: 'blue',
+
+
+                                        }).then(() => {
+                                            // Reload the page after success
+                                            location.reload();
+                                        });
+
+                                    })
+                                    .catch(error => {
+                                        // Handle error
+                                        Swal.fire({
+                                            title: 'Error',
+                                            text: 'Failed to add income details. Please try again later.',
+                                            icon: 'error',
+                                            confirmButtonText: 'OK',
+                                            confirmButtonColor: 'red',
+                                        });
+                                        console.error('Error:', error);
+                                    });
+
+                            }
+
+                        });
+
+                    } else {
+                        Swal.fire('Error', 'No categories available.', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching categories:', error);
+                    Swal.fire('Error', 'Failed to fetch categories.', 'error');
+                });
         });
     </script>
+
+
 
 
     <!-- card2 -->
@@ -87,9 +171,9 @@
                     <div class="flex-none w-2/3 max-w-full px-3">
                         <div>
                             <p class="mb-0 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">Expanse</p>
-                            <h5 class="mb-2 font-bold dark:text-white">$53,000</h5>
+                            <h5 class="mb-2 font-bold dark:text-white">$ <span class="text-red-500" id="expanse"></span></h5>
                             <div class="mb-0 dark:text-white dark:opacity-60 flex">
-                                <button id="addExpanse" class="inline-block px-6 py-3 mb-0 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer hover:scale-102 active:opacity-85 hover:shadow-xs bg-gradient-to-tl from-blue-500 to-violet-500 leading-pro ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 " onclick="soft.showSwal('basic')">Add</button></span>
+                                <button id="addExpanse" class="inline-block px-6 py-3 mb-0 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer hover:scale-102 active:opacity-85 hover:shadow-xs bg-gradient-to-tl from-blue-500 to-violet-500 leading-pro ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 ">Add</button></span>
                             </div>
 
                         </div>
@@ -105,56 +189,136 @@
     </div>
 
     <script>
-        // Function to show SweetAlert login popup
+        let expanse = document.querySelector('#expanse')
+        fetch('/get-sum-expense')
+            .then(response => response.json())
+            .then(data => {
+                expanse.innerText = data['expense'];
+            })
+
+
         document.getElementById('addExpanse').addEventListener('click', () => {
-            Swal.fire({
-                title: 'Add Expanse',
-                html: `
-            <!-- Form -->
-       <form id="myForm" method="POST" action="submit_form.php">
-            <!-- Name Field -->
-            <div class="form-row">
-                <label for="name">Name:</label>
-                <input type="text" id="name" name="name" required placeholder="Enter your name">
-            </div>
-
-            <!-- Email Field -->
-            <div class="form-row">
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required placeholder="Enter your email">
-            </div>
-
-            <!-- Message Field -->
-            <div class="form-row">
-                <label for="message">Message:</label>
-                <textarea id="message" name="message" rows="4" required placeholder="Your message"></textarea>
-            </div>
-
-            <!-- Submit Button -->
-            <div class="form-row">
-                <button type="submit">Submit</button>
-            </div>
-        </form>
-                      `,
-                confirmButtonText: 'Submit',
-                focusConfirm: false,
-                preConfirm: () => {
-                    const username = document.getElementById('swal-username').value;
-                    const password = document.getElementById('swal-password').value;
-
-                    if (!username || !password) {
-                        Swal.showValidationMessage('Please enter both username and password');
-                    } else {
-                        return { username, password };
+            // Fetch categories from the API
+            fetch('/list-category') // Replace with your actual API endpoint
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
                     }
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    const { username, password } = result.value;
-                    // Perform your login logic here (e.g., send data to the server)
-                    Swal.fire(`Welcome, ${username}!`);
-                }
-            });
+                    return response.json();
+                })
+                .then(data => {
+                    // Ensure the categories structure matches your backend response
+                    const categories = data.categories || data.data || data;
+
+                    if (categories && categories.length > 0) {
+                        // Generate options dynamically
+                        const options = categories
+                            .map(category => `<option value="${category.id}">${category.name}</option>`)
+                            .join('');
+
+                        // Show SweetAlert popup with dynamic categories
+                        Swal.fire({
+                            title: 'Add Income',
+                            html: `
+                            <form id="myForm">
+                                <!-- Name Field -->
+                                <div class="form-row">
+                                    <label for="name">Amount:</label>
+                                    <input type="tel" id="swal-amount" name="amount" required placeholder="Enter your amount">
+                                </div>
+
+                                <!-- Category Field -->
+                                <div class="form-row">
+                                    <label for="category">Category:</label>
+                                    <select name="category" id="swal-category" required>
+                                        <option value="">Select a category</option>
+                                        ${options}
+                                    </select>
+                                </div>
+
+                                <!-- Email Field -->
+                                <div class="form-row">
+                                    <label for="date">Date:</label>
+                                    <input type="date" id="swal-date" name="date" required placeholder="Enter Date">
+                                </div>
+
+                            </form>
+                        `,
+                            confirmButtonText: 'Submit',
+                            confirmButtonColor: 'green',
+                            preConfirm: () => {
+                                const amount = document.getElementById('swal-amount').value;
+                                const category = document.getElementById('swal-category').value;
+                                const date = document.getElementById('swal-date').value;
+
+                                if (!amount || !category || !date) {
+                                    Swal.showValidationMessage('Please fill out all fields');
+                                    return false;
+                                }
+
+                                return {
+                                    amount,
+                                    category,
+                                    date,
+
+                                };
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                const {
+                                    amount,
+                                    category,
+                                    date,
+
+                                } = result.value;
+
+                                // Send data to backend using Axios
+                                axios.post('/add-income', { // Replace with your actual endpoint
+                                        amount,
+                                        category_id: category,
+                                        date,
+
+                                    })
+                                    .then(response => {
+                                        // Show a success popup after data is successfully submitted
+                                        Swal.fire({
+                                            title: 'Success!',
+                                            text: 'Your income details have been added successfully.',
+                                            icon: 'success',
+                                            confirmButtonText: 'OK',
+                                            confirmButtonColor: 'blue',
+
+
+                                        }).then(() => {
+                                            // Reload the page after success
+                                            location.reload();
+                                        });
+
+                                    })
+                                    .catch(error => {
+                                        // Handle error
+                                        Swal.fire({
+                                            title: 'Error',
+                                            text: 'Failed to add income details. Please try again later.',
+                                            icon: 'error',
+                                            confirmButtonText: 'OK',
+                                            confirmButtonColor: 'red',
+                                        });
+                                        console.error('Error:', error);
+                                    });
+
+                            }
+
+                        });
+
+                    } else {
+                        Swal.fire('Error', 'No categories available.', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching categories:', error);
+                    Swal.fire('Error', 'Failed to fetch categories.', 'error');
+                });
         });
     </script>
 
@@ -173,7 +337,7 @@
                             <p class="mb-0 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">Servings</p>
                             <h5 class="mb-2 font-bold dark:text-white">$53,000</h5>
                             <div class="mb-0 dark:text-white dark:opacity-60 flex">
-                                <button id="servings" class="inline-block px-6 py-3 mb-0 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer hover:scale-102 active:opacity-85 hover:shadow-xs bg-gradient-to-tl from-blue-500 to-violet-500 leading-pro ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 " onclick="soft.showSwal('basic')">Add</button></span>
+                                <button id="servings" class="inline-block px-6 py-3 mb-0 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer hover:scale-102 active:opacity-85 hover:shadow-xs bg-gradient-to-tl from-blue-500 to-violet-500 leading-pro ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 ">Add</button></span>
                             </div>
 
                         </div>
@@ -189,56 +353,124 @@
     </div>
 
     <script>
-        // Function to show SweetAlert login popup
         document.getElementById('servings').addEventListener('click', () => {
-            Swal.fire({
-                title: 'Add Servings',
-                html: `
-            <!-- Form -->
-       <form id="myForm" method="POST" action="submit_form.php">
-            <!-- Name Field -->
-            <div class="form-row">
-                <label for="name">Name:</label>
-                <input type="text" id="name" name="name" required placeholder="Enter your name">
-            </div>
-
-            <!-- Email Field -->
-            <div class="form-row">
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required placeholder="Enter your email">
-            </div>
-
-            <!-- Message Field -->
-            <div class="form-row">
-                <label for="message">Message:</label>
-                <textarea id="message" name="message" rows="4" required placeholder="Your message"></textarea>
-            </div>
-
-            <!-- Submit Button -->
-            <div class="form-row">
-                <button type="submit">Submit</button>
-            </div>
-        </form>
-                      `,
-                confirmButtonText: 'Submit',
-                focusConfirm: false,
-                preConfirm: () => {
-                    const username = document.getElementById('swal-username').value;
-                    const password = document.getElementById('swal-password').value;
-
-                    if (!username || !password) {
-                        Swal.showValidationMessage('Please enter both username and password');
-                    } else {
-                        return { username, password };
+            // Fetch categories from the API
+            fetch('/list-category') // Replace with your actual API endpoint
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
                     }
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    const { username, password } = result.value;
-                    // Perform your login logic here (e.g., send data to the server)
-                    Swal.fire(`Welcome, ${username}!`);
-                }
-            });
+                    return response.json();
+                })
+                .then(data => {
+                    // Ensure the categories structure matches your backend response
+                    const categories = data.categories || data.data || data;
+
+                    if (categories && categories.length > 0) {
+                        // Generate options dynamically
+                        const options = categories
+                            .map(category => `<option value="${category.id}">${category.name}</option>`)
+                            .join('');
+
+                        // Show SweetAlert popup with dynamic categories
+                        Swal.fire({
+                            title: 'Add Sevings',
+                            html: `
+                        <form id="myForm">
+                            <!-- Name Field -->
+                            <div class="form-row">
+                                <label for="name">Name:</label>
+                                <input type="text" id="swal-name" name="name" required placeholder="Enter your name">
+                            </div>
+
+                            <!-- Category Field -->
+                            <div class="form-row">
+                                <label for="category">Category:</label>
+                                <select name="category" id="swal-category" required>
+                                    <option value="">Select a category</option>
+                                    ${options}
+                                </select>
+                            </div>
+
+                            <!-- Email Field -->
+                            <div class="form-row">
+                                <label for="email">Email:</label>
+                                <input type="email" id="swal-email" name="email" required placeholder="Enter your email">
+                            </div>
+
+                            <!-- Message Field -->
+                            <div class="form-row">
+                                <label for="message">Message:</label>
+                                <textarea id="swal-message" name="message" rows="4" required placeholder="Your message"></textarea>
+                            </div>
+                        </form>
+                    `,
+                            confirmButtonText: 'Submit',
+                            confirmButtonColor: 'green',
+                            preConfirm: () => {
+                                const name = document.getElementById('swal-name').value;
+                                const category = document.getElementById('swal-category').value;
+                                const email = document.getElementById('swal-email').value;
+                                const message = document.getElementById('swal-message').value;
+
+                                if (!name || !category || !email || !message) {
+                                    Swal.showValidationMessage('Please fill out all fields');
+                                    return false;
+                                }
+
+                                return {
+                                    name,
+                                    category,
+                                    email,
+                                    message
+                                };
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                const {
+                                    name,
+                                    category,
+                                    email,
+                                    message
+                                } = result.value;
+
+                                // Send data to backend using Axios
+                                axios.post('/api/add-income', { // Replace with your actual endpoint
+                                        name,
+                                        category,
+                                        email,
+                                        message
+                                    })
+                                    .then(response => {
+                                        // Show a success popup after data is successfully submitted
+                                        Swal.fire({
+                                            title: 'Success!',
+                                            text: 'Your income details have been added successfully.',
+                                            icon: 'success',
+                                            confirmButtonText: 'OK'
+                                        });
+                                        console.log('Response:', response.data);
+                                    })
+                                    .catch(error => {
+                                        // Handle error
+                                        Swal.fire({
+                                            title: 'Error',
+                                            text: 'Failed to add income details. Please try again later.',
+                                            icon: 'error',
+                                            confirmButtonText: 'OK'
+                                        });
+                                        console.error('Error:', error);
+                                    });
+                            }
+                        });
+                    } else {
+                        Swal.fire('Error', 'No categories available.', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching categories:', error);
+                    Swal.fire('Error', 'Failed to fetch categories.', 'error');
+                });
         });
     </script>
 
@@ -270,6 +502,6 @@
             </div>
         </div>
     </div>
+
+
 </div>
-
-
