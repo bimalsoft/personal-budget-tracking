@@ -90,3 +90,13 @@ form {
     background-color: #45a049;
 }
 
+.h{
+    max-height: 380px;
+    overflow: auto;
+    overflow-y: scroll;
+    /*scrollbar-color: red orange;*/
+
+    scrollbar-width: thin;
+
+
+}

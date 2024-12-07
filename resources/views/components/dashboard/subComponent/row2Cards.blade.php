@@ -12,38 +12,144 @@
         </div>
     </div>
 
+
+
+
     <div class="w-full max-w-full px-3 mt-0 lg:w-5/12 lg:flex-none">
-    <div class="border-black/12.5 shadow-xl dark:bg-slate-850 dark:shadow-dark-xl relative flex min-w-0 flex-col break-words rounded-2xl border-0 border-solid bg-white bg-clip-border">
-        <div class="p-4 pb-0 rounded-t-4 flex justify-between">
-            <h6 class="mb-0 dark:text-white">Categories</h6>
-            <div class="mb-0 dark:text-white dark:opacity-60 flex">
-                <button id="category" class="inline-block px-6 py-3 mb-0 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer hover:scale-102 active:opacity-85 hover:shadow-xs bg-gradient-to-tl from-blue-500 to-violet-500 leading-pro ease-in tracking-tight-rem shadow-md bg-150 bg-x-25">
-                    Add
-                </button>
+        <div class="border-black/12.5 h shadow-xl dark:bg-slate-850 dark:shadow-dark-xl relative flex min-w-0 flex-col break-words rounded-2xl border-0 border-solid bg-white bg-clip-border">
+            <div class="p-4 pb-0 rounded-t-4 flex justify-between">
+                <h6 class="mb-0 dark:text-white">Categories</h6>
+                <div class="mb-0 dark:text-white dark:opacity-60 flex">
+                    <button id="category" class="inline-block px-6 py-3 mb-0 text-xs font-bold text-center text-white uppercase align-middle transition-all border-0 rounded-lg cursor-pointer hover:scale-102 active:opacity-85 hover:shadow-xs bg-gradient-to-tl from-blue-500 to-violet-500 leading-pro ease-in tracking-tight-rem shadow-md bg-150 bg-x-25">
+                        Add
+                    </button>
+                </div>
             </div>
-        </div>
-        <div class="flex-auto p-4">
-            <ul class="flex flex-col pl-0 mb-0 rounded-lg">
-                <li class="relative flex justify-between py-2 pr-4 mb-2 border-0 rounded-t-lg rounded-xl text-inherit">
-                    <div class="flex items-center">
-                        <div class="inline-block w-8 h-8 mr-4 text-center text-black bg-center shadow-sm fill-current stroke-none bg-gradient-to-tl from-zinc-800 to-zinc-700 dark:bg-gradient-to-tl dark:from-slate-750 dark:to-gray-850 rounded-xl">
-                            <i class="text-white ni ni-mobile-button relative top-0.75 text-xxs"></i>
-                        </div>
-                        <div class="flex flex-col">
-                            <h6 class="mb-1 text-sm leading-normal text-slate-700 dark:text-white">Devices</h6>
-                            <span class="text-xs leading-tight dark:text-white/80">250 in stock, <span class="font-semibold">346+ sold</span></span>
-                        </div>
-                    </div>
-                    <div class="flex">
-                        <button class="group ease-in leading-pro text-xs rounded-3.5xl p-1.2 h-6.5 w-6.5 mx-0 my-auto inline-block cursor-pointer border-0 bg-transparent text-center align-middle font-bold text-slate-700 shadow-none transition-all dark:text-white">
-                            <i class="ni ease-bounce text-2xs group-hover:translate-x-1.25 ni-bold-right transition-all duration-200" aria-hidden="true"></i>
-                        </button>
-                    </div>
-                </li>
-            </ul>
+            <div class="flex-auto p-4">
+                <ul id="categories-list" class="flex flex-col pl-0 mb-0 rounded-lg">
+                    <!-- Categories will be appended here -->
+                </ul>
+            </div>
         </div>
     </div>
 </div>
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Fetch and display categories on page load
+        fetchCategories();
+
+        // Add category button click event
+        document.getElementById('category').addEventListener('click', () => {
+            Swal.fire({
+                title: 'Add Category',
+                html: `
+                    <form id="addCategoryForm">
+                        <!-- Name Field -->
+                        <div class="form-row">
+                            <label for="name">Name:</label>
+                            <input type="text" id="swal-name" name="name" class="swal2-input" required placeholder="Enter category name">
+                        </div>
+
+                        <!-- Type Field -->
+                        <div class="form-row">
+                            <label for="type">Type:</label>
+                            <select id="swal-type" name="type" class="swal2-input" required>
+                                <option value="" selected disabled>Select Type</option>
+                                <option value="income">Income</option>
+                                <option value="expense">Expense</option>
+                            </select>
+                        </div>
+                    </form>
+                `,
+                confirmButtonText: 'Submit',
+                confirmButtonColor: 'green',
+                preConfirm: () => {
+                    const name = document.getElementById('swal-name').value.trim();
+                    const type = document.getElementById('swal-type').value;
+
+                    if (!name || !type) {
+                        Swal.showValidationMessage('Please fill out all fields and select a type');
+                        return false;
+                    }
+
+                    return { name, type };
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const { name, type } = result.value;
+
+                    // Send data to backend using Axios
+                    axios.post('/create-category', { name, type }) // Replace with your API endpoint
+                        .then(response => {
+                            // Show success message
+                            Swal.fire({
+                                title: 'Success!',
+                                text: `${type.charAt(0).toUpperCase() + type.slice(1)} category added successfully.`,
+                                icon: 'success',
+                                confirmButtonText: 'OK',
+                                confirmButtonColor: 'blue',
+                            });
+
+                            // Refresh categories list
+                            fetchCategories();
+                        })
+                        .catch(error => {
+                            // Show error message
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'Failed to add category. Please try again later.',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                            console.error('Error:', error);
+                        });
+                }
+            });
+        });
+    });
+
+    // Function to fetch and display categories
+    async function fetchCategories() {
+        try {
+            const response = await axios.get('/list-category'); // Replace with your API endpoint
+            const result = response.data;
+
+            if (result.status === 'success') {
+                const categoriesList = document.getElementById('categories-list');
+                categoriesList.innerHTML = ''; // Clear existing categories
+
+                result.data.forEach((category) => {
+                    const li = document.createElement('li');
+                    li.className = 'relative flex justify-between py-2 pr-4 mb-2 border-0 rounded-t-lg rounded-xl text-inherit';
+                    li.innerHTML = `
+                        <div class="flex items-center">
+                            <div class="inline-block w-8 h-8 mr-4 text-center text-black bg-center shadow-sm fill-current stroke-none bg-gradient-to-tl from-zinc-800 to-zinc-700 dark:bg-gradient-to-tl dark:from-slate-750 dark:to-gray-850 rounded-xl">
+                                <i class="text-white ni ni-mobile-button relative top-0.75 text-xxs"></i>
+                            </div>
+                            <div class="flex flex-col">
+                                <h6 class="mb-1 text-sm leading-normal text-slate-700 dark:text-white">${category.name}</h6>
+                                <span class="text-xs leading-tight dark:text-white/80">${category.type.charAt(0).toUpperCase() + category.type.slice(1)}</span>
+                            </div>
+                        </div>
+                    `;
+                    categoriesList.appendChild(li);
+                });
+            } else {
+                console.error('Failed to fetch categories:', result);
+                Swal.fire('Error', 'Failed to fetch categories.', 'error');
+            }
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+            Swal.fire('Error', 'Failed to fetch categories.', 'error');
+        }
+    }
+</script>
+
+
+
 
 
 
@@ -66,8 +172,7 @@
             type: "line",
             data: {
                 labels: [],
-                datasets: [
-                    {
+                datasets: [{
                         label: "Income",
                         borderColor: "#5e72e4",
                         backgroundColor: gradientStrokeIncome,
@@ -89,18 +194,22 @@
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { display: true },
+                    legend: {
+                        display: true
+                    },
                 },
                 scales: {
                     y: {
                         ticks: {
-                            callback: function (value) {
+                            callback: function(value) {
                                 return '$' + value.toFixed(2);
                             },
                         },
                     },
                     x: {
-                        ticks: { display: true },
+                        ticks: {
+                            display: true
+                        },
                     },
                 },
             },
