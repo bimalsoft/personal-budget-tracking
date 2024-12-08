@@ -17,7 +17,7 @@ class IncomeController extends Controller
                 'date' => 'required',
                 'category_id' => 'required',
             ]);
-            $email = JWTToken::VerifyToken($request->cookie("token"));
+            $email = $request->header('email');
             $user = User::where('email', $email)->first();
             $request["user_id"] = $user->id;
             Income::create($request->all());
@@ -33,7 +33,7 @@ class IncomeController extends Controller
     {
 
         try {
-            $email = JWTToken::VerifyToken($request->cookie("token"));
+            $email = $request->header('email');
             $user = User::where('email', $email)->first();
             $incomes = Income::where('user_id', $user->id)->get();
             return response()->json(['ststus'=>'success','incomes' => $incomes]);
@@ -43,7 +43,12 @@ class IncomeController extends Controller
     }
 
 
-
+    function showBalance(Request $request)
+    {
+        $email = $request->header('email');
+        $user = User::where('email', $email)->first();
+        return response()->json(['ststus'=>'success','balance' => $user->balance]);
+    }
 
     //End
 }

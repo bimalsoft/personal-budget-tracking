@@ -16,6 +16,8 @@
     <!-- Main Styling -->
     <link rel="stylesheet" href="{{asset('assets/css/coustom.css')}}">
     <link href="{{asset('assets/css/argon-dashboard-tailwind.css')}}" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 
 </head>

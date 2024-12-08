@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('expenses', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-//            $table->unsignedBigInteger('category_id');
+            $table->unsignedBigInteger('category_id');
             $table->string('name',50);
             $table->decimal('amount', 10, 2);
             $table->text('description')->nullable();
@@ -24,9 +24,9 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users')
                 ->cascadeOnUpdate()
                 ->restrictOnDelete();
-//            $table->foreign('category_id')->references('id')->on('categories')
-//                ->cascadeOnUpdate()
-//                ->restrictOnDelete();
+            $table->foreign('category_id')->references('id')->on('categories')
+                ->cascadeOnUpdate()
+                ->restrictOnDelete();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
