@@ -1,8 +1,14 @@
 <div class="flex flex-wrap mt-6 -mx-3">
     <div class="w-full max-w-full px-3 mt-0 lg:w-7/12 lg:flex-none">
         <div class="border-black/12.5 dark:bg-slate-850 dark:shadow-dark-xl shadow-xl relative z-20 flex min-w-0 flex-col break-words rounded-2xl border-0 border-solid bg-white bg-clip-border">
-            <div class="border-black/12.5 mb-0 rounded-t-2xl border-b-0 border-solid p-6 pt-4 pb-0">
+            <div class="border-black/12.5 mb-0 rounded-t-2xl border-b-0 border-solid p-6 pt-4 pb-0 flex justify-between">
                 <h6 class="capitalize dark:text-white">Overview</h6>
+                <!-- <select id="ctype">
+                    <option value="line" selected>Line</option>
+                    <option value="bar" >Bar</option>
+                    <option value="polarArea" >Polar Area</option>
+                    <option value="radar" >Radar</option>
+                </select> -->
             </div>
             <div class="flex-auto p-4">
                 <div>
@@ -50,7 +56,7 @@
                         <!-- Name Field -->
                         <div class="form-row">
                             <label for="name">Name:</label>
-                            <input type="text" id="swal-name" name="name" class="swal2-input" required placeholder="Enter category name">
+                            <input type="text" id="swal-name" name="name" class="" required placeholder="Enter category name">
                         </div>
 
                         <!-- Type Field -->
@@ -156,6 +162,7 @@
 <script>
     if (document.querySelector("#chart-line")) {
         const ctx1 = document.getElementById("chart-line").getContext("2d");
+        // const ctype = document.getElementById("ctype").value
 
         // Create gradients for income and expense
         const gradientStrokeIncome = ctx1.createLinearGradient(0, 230, 0, 50);

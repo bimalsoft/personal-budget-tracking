@@ -59,6 +59,12 @@
                             title: 'Add Income',
                             html: `
                             <form id="incomeForm">
+                                                        <!-- Name Field -->
+                             <div class="form-row">
+                            <label for="name">Name:</label>
+                            <input type="text" id="swal-name" name="name" class="" required placeholder="Enter category name">
+                        </div>
+
                                 <div class="form-row">
                                     <label for="amount">Amount:</label>
                                     <input type="tel" id="swal-amount" name="amount" required placeholder="Enter your amount">
@@ -82,13 +88,15 @@
                                 const amount = document.getElementById('swal-amount').value.trim();
                                 const category = document.getElementById('swal-category').value;
                                 const date = document.getElementById('swal-date').value;
+                                const name = document.getElementById('swal-name').value;
 
-                                if (!amount || !category || !date) {
+                                if (!name||!amount || !category || !date) {
                                     Swal.showValidationMessage('Please fill out all fields');
                                     return null;
                                 }
 
                                 return {
+                                    name,
                                     amount,
                                     category,
                                     date
@@ -97,6 +105,7 @@
                         }).then(result => {
                             if (result.isConfirmed) {
                                 const {
+                                    name,
                                     amount,
                                     category,
                                     date
@@ -104,6 +113,7 @@
 
                                 // Send data to the backend
                                 axios.post('/add-income', {
+                                        name,
                                         amount,
                                         category_id: category,
                                         date,

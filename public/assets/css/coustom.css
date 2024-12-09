@@ -22,7 +22,7 @@
 }
 
 /* Form styling */
-form {
+form, #addCategoryForm {
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -36,7 +36,7 @@ form {
     gap: 15px;
 }
 
-.form-row label {
+.form-row label .lev{
     font-size: 14px;
     font-weight: 600;
     color: #333;
@@ -99,4 +99,10 @@ form {
     scrollbar-width: thin;
 
 
+}
+.r{
+    color: red;
+}
+.g{
+    color: green;
 }

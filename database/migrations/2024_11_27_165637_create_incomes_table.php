@@ -22,6 +22,7 @@ return new class extends Migration
             $table->unsignedBigInteger('category_id');
             $table->foreign('category_id')->references('id')->on('categories')->cascadeOnUpdate()->restrictOnDelete();
 
+            $table->string('name', 20);
             $table->decimal('amount', 10, 2);
             $table->text('description')->nullable();
             $table->date('date');
