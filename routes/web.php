@@ -29,6 +29,7 @@ Route::post('/reset-password',[UserController::class,'ResetPassword'])->middlewa
 
 // User Logout
 Route::get('/logout',[UserController::class,'UserLogout']);
+Route::get('/get-users',[UserController::class,'index']);
 
 
 // Page Routes
@@ -40,6 +41,8 @@ Route::get('/verifyOtp',[UserController::class,'VerifyOTPPage']);
 Route::get('/resetPassword',[UserController::class,'ResetPasswordPage'])->middleware([TokenVerificationMiddleware::class]);
 Route::get('/history',[PageController::class, 'history'])->middleware([TokenVerificationMiddleware::class]);
 
+// admin route get user
+Route::get('/users',[PageController::class,'users'])->middleware([TokenVerificationMiddleware::class]);
 
 // Category API
 Route::post("/create-category",[CategoryController::class,'CategoryCreate'])->middleware([TokenVerificationMiddleware::class]);
@@ -69,10 +72,14 @@ Route::get('login',[PageController::class, 'login']);
 // History Api Routes
 Route::get('get-history',[HistoryController::class, 'index'])->middleware([TokenVerificationMiddleware::class]);
 
+
+
+
+
 // this route use tasting purpose!
-Route::get('/test', function (){
-    return view('pages.dashboard.tablePage');
-});
+//Route::get('/test', function (){
+//    return view('pages.dashboard.tablePage');
+//});
 
 
 

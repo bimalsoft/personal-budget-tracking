@@ -14,6 +14,12 @@ class PageController extends Controller
     {
         return view('pages.dashboard.tablePage');
     }
+
+    function users(Request $request)
+    {
+        return view('pages.dashboard.userTablePage');
+    }
+
     function login(Request $request)
     {
         return view('pages.auth.login-page');

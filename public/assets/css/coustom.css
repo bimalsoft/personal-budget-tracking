@@ -106,3 +106,22 @@ form, #addCategoryForm {
 .g{
     color: green;
 }
+
+.footer{
+
+    text-align: center;
+    height: 10vh;
+    background: #4a5568;
+    color: #2dce89;
+}
+.footerh2{
+    padding-top: 3vh;
+}
+
+.hh{
+
+    height: 100vh;
+}
+html{
+    scrollbar-width: none;
+}
