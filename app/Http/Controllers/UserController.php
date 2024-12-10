@@ -47,7 +47,6 @@ class UserController extends Controller
             $validator = Validator::make($request->all(), [
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|unique:users,email|max:255',
-                'mobile' => 'required|string|max:15', // Adjust max length as needed
                 'password' => 'required|string|min:6', // 'confirmed' requires a password_confirmation field
             ]);
 
@@ -64,10 +63,7 @@ class UserController extends Controller
                 'ipaddress' => $request->ip(),
             ]);
 
-            return response()->json([
-                'status' => 'success',
-                'message' => 'User Registered Successfully',
-            ], 200);
+            return redirect('/login');
         }
         catch (Exception $e) {
             return response()->json([
@@ -174,6 +170,12 @@ class UserController extends Controller
 
     function UserLogout(){
         return redirect('/')->cookie('token','',-1);
+    }
+
+    function index(Request $request)
+    {
+        $data = User::all();
+        return response()->json(['status'=>'success','data'=>$data],200);
     }
 
 }

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Helper\JWTToken;
+use App\Models\Category;
 use App\Models\Expense;
+use App\Models\History;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Mockery\Exception;
@@ -14,6 +16,7 @@ class ExpenseController extends Controller
         {
             $user_id=$request->header('id');
             $user = User::where('id',$user_id)->first();
+            $category = Category::where('id', $request->input('category_id'))->first();
 
             try {
                 $user->decrement('balance', $request->input('amount'));
@@ -26,6 +29,14 @@ class ExpenseController extends Controller
                     'description'=>$request->input('description'),
                     'date'=>$request->input('date'),
                     'receipt'=>$request->input('receipt')
+                ]);
+                History::create([
+                    "name"=>$request->input('name'),
+                    "user_id" => $user->id,
+                    "type" => "expense",
+                    "amount"=>$request->input('amount'),
+                    "date"=>$request->input('date'),
+                    "category"=>$category->name,
                 ]);
                 return response()->json([
                     'status'=>'success',

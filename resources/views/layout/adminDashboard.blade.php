@@ -27,7 +27,7 @@
 <div class="absolute w-full bg-blue-500 dark:hidden min-h-75"></div>
 <!-- sidenav  -->
 
-@include('components.dashboard.sideNav')
+@include('components.dashboard.adminSideNav')
 
 <!-- end sidenav -->
 
@@ -40,9 +40,7 @@
     @yield('component')
     <!-- end cards -->
 </main>
-
 @include('components.footer')
-
 </body>
 <!-- plugin for charts  -->
 <script src="{{asset('assets/js/plugins/chartjs.min.js')}}" async></script>
